@@ -1,0 +1,189 @@
+
+
+
+
+MLS                                                              R. Mahy
+Internet-Draft                                                      Wire
+Intended status: Informational                              10 July 2023
+Expires: 11 January 2024
+
+
+ A Messaging Layer Security (MLS) extension for More Instant Messaging
+                 Interoperability (MIMI) room policies
+                 draft-mahy-mls-room-policy-ext-latest
+
+Abstract
+
+   This document describes a Message Layer Security (MLS) GroupContext
+   extension to include More Instant Messaging Interoperability (MIMI)
+   group chat (room) policy inside an MLS group.  This allows all users
+   in a group to agree on the current policy and make authorization
+   decisions accordingly.
+
+About This Document
+
+   This note is to be removed before publishing as an RFC.
+
+   Status information for this document may be found at
+   https://datatracker.ietf.org/doc/draft-mahy-mls-room-policy-ext/.
+
+   Discussion of this document takes place on the MLS Working Group
+   mailing list (mailto:mls@ietf.org), which is archived at
+   https://mailarchive.ietf.org/arch/browse/mls/.  Subscribe at
+   https://www.ietf.org/mailman/listinfo/mls/.
+
+   Source for this draft and an issue tracker can be found at
+   https://github.com/rohan-wire/mls-room-policy-ext/.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 11 January 2024.
+
+Copyright Notice
+
+   Copyright (c) 2023 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction
+   2.  Conventions and Definitions
+   3.  Extension Description
+   4.  Security Considerations
+   5.  IANA Considerations
+     5.1.  room_policy MLS Extension Type
+   6.  Normative References
+   Author's Address
+
+1.  Introduction
+
+   The More Instant Messaging Interoperability (MIMI) group chat
+   framework [I-D.mahy-mimi-group-chat] defines a room policy format.
+   This document describes a Message Layer Security (MLS)
+   [I-D.ietf-mls-protocol] GroupContext extension that allows all users
+   in a group to agree on the current policy and make authorization
+   decisions accordingly.
+
+2.  Conventions and Definitions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+   The terms MLS client, MLS group, GroupContext, Commit, Proposal,
+   GroupContextExtensions Proposal, andrequired_capabilities have the
+   same meanings as in the MLS protocol [@!I-D.ietf-mls-protocol].
+
+3.  Extension Description
+
+   This document specifies a GroupContext MLS extension room_policy of
+   type RoomPolicy (defined in Section 8 of [I-D.mahy-mimi-group-chat]).
+   The syntax is described using the TLS Presentation Language
+   [@!RFC8446].
+
+   RoomPolicy room_policy;
+
+   An MLS client which implements this specification SHOULD include the
+   room_policy extension in the extensions field in the GroupContext of
+   groups it creates which have an associated room policy.  It includes
+   a machine readable description of the room policy sufficient for all
+   clients in the group to authorize MLS primitives (like a Commit with
+   an Add Proposal).  As new members of the group are added or removed,
+   the member which Commits these membership changes is expected to
+   maintain the room_policy up-to-date, and consistent with the
+   membership of the group by also including an appropriate
+   GroupContextExtensions Proposal any time the policy changes.  It also
+   allows a client to inspect the room_policy before joining to
+   determine if the policies are consistent with its own.
+
+4.  Security Considerations
+
+   The Security Considerations of MLS apply.  The authorization rules
+   for the RoomPolicy object are described in detail in
+   [I-D.mahy-mimi-group-chat].
+
+   Improper use of the extension in this document could allow the
+   creator of an MLS group or the sender of a GroupContextExtensions
+   Proposal to maliciously modify or subvert the policies of a group
+   chat which could result in viewing private information about the
+   participants of the room, loss of confidentiality of the contents of
+   the room (after subverting the policies and until the policies are
+   corrected), and injecting potentially unwanted messages into the room
+   (spam, abuse, phishing, and attempted impersonation).
+
+5.  IANA Considerations
+
+   This document proposes registration of a new MLS Extension Type.
+
+   RFC EDITOR: Please replace XXXX throughout with the RFC number
+   assigned to this document
+
+5.1.  room_policy MLS Extension Type
+
+   The room_policy MLS Extension Type is used inside GroupContext
+   objects.  It contains a RoomPolicy object as defined in Section 8 of
+   [I-D.mahy-mimi-group-chat], representing the room policy for the MLS
+   group corresponding with the room.
+
+     Template:
+     Value: 0x000B
+     Name: room_policy
+     Message(s): This extension may appear in GroupContext objects
+     Recommended: Y
+     Reference: RFC XXXX
+
+6.  Normative References
+
+   [I-D.ietf-mls-protocol]
+              Barnes, R., Beurdouche, B., Robert, R., Millican, J.,
+              Omara, E., and K. Cohn-Gordon, "The Messaging Layer
+              Security (MLS) Protocol", Work in Progress, Internet-
+              Draft, draft-ietf-mls-protocol-20, 27 March 2023,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-mls-
+              protocol-20>.
+
+   [I-D.mahy-mimi-group-chat]
+              Mahy, R., "Group Chat Framework for More Instant Messaging
+              Interoperability (MIMI)", Work in Progress, Internet-
+              Draft, draft-mahy-mimi-group-chat-00, 10 July 2023,
+              <https://datatracker.ietf.org/doc/html/draft-mahy-mimi-
+              group-chat-00>.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+Author's Address
+
+   Rohan Mahy
+   Wire
+   Email: rohan.mahy@wire.com
